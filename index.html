@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeonFlux | Dashboard</title>
+    <title>NeonFlux | Pro Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -26,12 +26,12 @@
             background-image: radial-gradient(circle at 10% 20%, rgba(0, 242, 255, 0.03) 0%, transparent 20%);
             min-height: 100vh;
             padding: 15px;
-            padding-bottom: 80px; /* Space for mobile scroll */
+            padding-bottom: 80px;
         }
 
         .container { max-width: 1200px; margin: 0 auto; }
 
-        /* --- Header & Mobile Layout --- */
+        /* --- Header --- */
         header {
             display: flex;
             justify-content: space-between;
@@ -45,12 +45,9 @@
 
         h1 { font-size: 1.5rem; letter-spacing: 1px; text-shadow: 0 0 10px var(--primary); }
         
-        .controls { 
-            display: flex; 
-            gap: 10px; 
-        }
+        .controls { display: flex; gap: 10px; }
 
-        /* --- Buttons & Inputs --- */
+        /* --- UI Elements --- */
         button {
             background: rgba(0, 242, 255, 0.05);
             border: 1px solid var(--primary);
@@ -75,21 +72,15 @@
             outline: none;
         }
 
-        /* --- Responsive Design --- */
+        /* --- Responsive --- */
         @media (max-width: 768px) {
             header { flex-direction: column; align-items: flex-start; }
-            .controls { 
-                width: 100%; 
-                display: grid; 
-                grid-template-columns: 1fr 1fr; /* 2 buttons per row */
-            }
-            #businessSelector { grid-column: 1 / -1; width: 100%; padding: 12px; } /* Full width dropdown */
-            button { justify-content: center; padding: 12px; } /* Larger touch targets */
-            
-            .card .amount { font-size: 1.5rem; }
+            .controls { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+            #businessSelector { grid-column: 1 / -1; width: 100%; }
+            button { justify-content: center; padding: 12px; }
         }
 
-        /* --- Dashboard Cards --- */
+        /* --- Stats Cards --- */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -122,53 +113,39 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .transactions { overflow-x: auto; } /* Scrollable on mobile */
+        .transactions { overflow-x: auto; }
         
-        table { width: 100%; border-collapse: collapse; min-width: 600px; } /* Force min width for scroll */
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 12px; color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
         td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
         
-        .action-btn { border: none; background: none; padding: 5px; font-size: 1rem; }
+        .action-btn { border: none; background: none; padding: 5px; font-size: 1rem; cursor: pointer; }
         .btn-del { color: var(--danger); } .btn-edit { color: var(--text-muted); }
 
-        /* --- Modal System --- */
+        /* --- Modals --- */
         .modal {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center; /* Center vertically */
-            padding: 20px;
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 1000;
+            justify-content: center; align-items: center; padding: 20px;
         }
         .modal-content {
-            background: #0f1c2e;
-            width: 100%; max-width: 400px;
-            border-radius: 12px;
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 25px rgba(0, 242, 255, 0.15);
-            padding: 25px;
-            max-height: 90vh;
-            overflow-y: auto;
+            background: #0f1c2e; width: 100%; max-width: 400px;
+            border-radius: 12px; border: 1px solid var(--primary);
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.15); padding: 25px;
+            max-height: 90vh; overflow-y: auto;
         }
 
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 0.9rem; }
-        .form-group input, .form-group select { width: 100%; padding: 12px; } /* Big inputs */
-
+        .form-group input, .form-group select { width: 100%; padding: 12px; }
         .currency-input-group { display: flex; gap: 8px; }
 
-        /* --- Business List Manager Styles --- */
+        /* --- Biz Manager --- */
         .biz-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            background: rgba(255,255,255,0.03);
-            border-radius: 6px;
-            margin-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px; background: rgba(255,255,255,0.03);
+            border-radius: 6px; margin-bottom: 8px;
         }
-        .biz-item span { font-weight: 500; }
         .biz-delete { color: var(--danger); cursor: pointer; padding: 5px; }
 
     </style>
@@ -179,10 +156,10 @@
         <header>
             <div>
                 <h1>NeonFlux</h1>
-                <p style="color: var(--text-muted); font-size: 0.8rem;">Business Dashboard</p>
+                <p style="color: var(--text-muted); font-size: 0.8rem;">Mobile Business Dashboard</p>
             </div>
             <div class="controls">
-                <select id="businessSelector" onchange="filterData()">
+                <select id="businessSelector" onchange="updateDashboard()">
                     <option value="all">All Businesses</option>
                 </select>
                 <button onclick="openBusinessModal()"><i class="fa-solid fa-list-check"></i> Manage Biz</button>
@@ -209,7 +186,7 @@
         <div class="graph-section">
             <div style="display: flex; justify-content: space-between; margin-bottom: 15px; align-items: center;">
                 <h3 style="font-size: 1rem;">Analytics</h3>
-                <select id="chartType" onchange="updateChart()" style="padding: 5px 10px;">
+                <select id="chartType" onchange="updateDashboard()" style="padding: 5px 10px;">
                     <option value="daily">Daily</option>
                     <option value="monthly">Monthly</option>
                 </select>
@@ -245,17 +222,14 @@
             </div>
             <form id="entryForm" onsubmit="handleFormSubmit(event)">
                 <input type="hidden" id="editId">
-                
                 <div class="form-group">
                     <label>Business</label>
                     <select id="entryBusiness" required></select>
                 </div>
-
                 <div class="form-group">
                     <label>Client Name</label>
                     <input type="text" id="clientName" required placeholder="Client Name">
                 </div>
-
                 <div class="form-group">
                     <label>Amount</label>
                     <div class="currency-input-group">
@@ -267,12 +241,10 @@
                     </div>
                     <small id="conversionPreview" style="color: var(--primary); display: block; margin-top: 5px;">≈ $0.00</small>
                 </div>
-
                 <div class="form-group">
                     <label>Date</label>
                     <input type="date" id="date" required>
                 </div>
-                
                 <button type="submit" style="width: 100%; justify-content: center; padding: 15px;">Save Entry</button>
             </form>
         </div>
@@ -284,14 +256,11 @@
                 <h2>Manage Businesses</h2>
                 <span onclick="closeBusinessModal()" style="font-size: 1.5rem; cursor: pointer;">&times;</span>
             </div>
-            
             <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                 <input type="text" id="newBizInput" placeholder="New Business Name">
                 <button onclick="addBusinessFromModal()">Add</button>
             </div>
-
-            <div style="max-height: 200px; overflow-y: auto;" id="businessListContainer">
-                </div>
+            <div style="max-height: 200px; overflow-y: auto;" id="businessListContainer"></div>
         </div>
     </div>
 
@@ -307,7 +276,7 @@
             document.getElementById('date').valueAsDate = new Date();
         });
 
-        // --- Dashboard Logic ---
+        // --- Core Functions ---
         function updateDashboard() {
             const selectedBiz = document.getElementById('businessSelector').value;
             const filteredData = selectedBiz === 'all' ? transactions : transactions.filter(t => t.business === selectedBiz);
@@ -322,12 +291,90 @@
             renderChart(filteredData);
         }
 
+        function renderChart(data) {
+            const ctx = document.getElementById('earningsChart').getContext('2d');
+            const type = document.getElementById('chartType').value;
+            
+            // 1. Group Data
+            const grouped = {};
+            data.forEach(t => {
+                let key;
+                if (type === 'monthly') {
+                    // Extract YYYY-MM (e.g., 2024-02)
+                    key = t.date.substring(0, 7); 
+                } else {
+                    // Daily (e.g., 2024-02-15)
+                    key = t.date; 
+                }
+                grouped[key] = (grouped[key] || 0) + parseFloat(t.amount);
+            });
+
+            // 2. Sort Keys (Dates)
+            const sortedKeys = Object.keys(grouped).sort();
+
+            // 3. Format Labels for Display (e.g., "Jan 2024" or "Feb 15")
+            const labels = sortedKeys.map(key => {
+                const date = new Date(key + (type === 'monthly' ? '-01' : ''));
+                if (type === 'monthly') {
+                    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); // "Jan 2024"
+                } else {
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); // "Jan 15"
+                }
+            });
+
+            const values = sortedKeys.map(k => grouped[k]);
+
+            // 4. Render Chart
+            if (myChart) myChart.destroy();
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Earnings (USD)',
+                        data: values,
+                        backgroundColor: 'rgba(0, 242, 255, 0.6)',
+                        borderColor: '#00f2ff',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `$${context.raw.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: { 
+                            beginAtZero: true,
+                            ticks: { color: '#64748b' }, 
+                            grid: { color: 'rgba(255,255,255,0.05)' } 
+                        },
+                        x: { 
+                            ticks: { color: '#64748b', maxRotation: 45, minRotation: 0 }, 
+                            grid: { display: false } 
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Table & Forms ---
         function renderTable(data) {
             const tbody = document.getElementById('transactionTableBody');
             tbody.innerHTML = '';
-            data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            // Clone and sort data so original order isn't affected if needed elsewhere
+            const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            data.forEach(t => {
+            sortedData.forEach(t => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${t.date}</td>
@@ -344,45 +391,6 @@
             });
         }
 
-        function renderChart(data) {
-            const ctx = document.getElementById('earningsChart').getContext('2d');
-            const type = document.getElementById('chartType').value;
-            
-            const grouped = {};
-            data.forEach(t => {
-                const key = type === 'monthly' ? t.date.substring(0, 7) : t.date;
-                grouped[key] = (grouped[key] || 0) + parseFloat(t.amount);
-            });
-
-            const labels = Object.keys(grouped).sort();
-            const values = labels.map(k => grouped[k]);
-
-            if (myChart) myChart.destroy();
-            myChart = new Chart(ctx, {
-                type: 'bar', // Better for mobile than line usually
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'USD Earnings',
-                        data: values,
-                        backgroundColor: 'rgba(0, 242, 255, 0.6)',
-                        borderColor: '#00f2ff',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        x: { ticks: { color: '#64748b', maxRotation: 45, minRotation: 45 }, grid: { display: false } }
-                    }
-                }
-            });
-        }
-
-        // --- Entry Management ---
         function handleFormSubmit(e) {
             e.preventDefault();
             const id = document.getElementById('editId').value;
@@ -435,11 +443,8 @@
             }
         }
 
-        // --- Business Management ---
-        function openBusinessModal() {
-            document.getElementById('businessModal').style.display = 'flex';
-            renderBusinessList();
-        }
+        // --- Business Logic ---
+        function openBusinessModal() { document.getElementById('businessModal').style.display = 'flex'; renderBusinessList(); }
         function closeBusinessModal() { document.getElementById('businessModal').style.display = 'none'; }
         
         function renderBusinessList() {
@@ -460,7 +465,7 @@
             const name = input.value.trim();
             if (name && !businesses.includes(name)) {
                 businesses.push(name);
-                saveBusinesses();
+                localStorage.setItem('businesses', JSON.stringify(businesses));
                 input.value = '';
                 renderBusinessList();
                 renderBusinessOptions();
@@ -468,26 +473,20 @@
         }
 
         function deleteBusiness(name) {
-            if(confirm(`Delete "${name}"? Existing entries will remain.`)) {
+            if(confirm(`Delete "${name}"?`)) {
                 businesses = businesses.filter(b => b !== name);
-                saveBusinesses();
+                localStorage.setItem('businesses', JSON.stringify(businesses));
                 renderBusinessList();
                 renderBusinessOptions();
             }
-        }
-
-        function saveBusinesses() {
-            localStorage.setItem('businesses', JSON.stringify(businesses));
         }
 
         function renderBusinessOptions() {
             const mainSel = document.getElementById('businessSelector');
             const modSel = document.getElementById('entryBusiness');
             const current = mainSel.value;
-
             mainSel.innerHTML = '<option value="all">All Businesses</option>';
             modSel.innerHTML = '';
-            
             businesses.forEach(b => {
                 mainSel.innerHTML += `<option value="${b}">${b}</option>`;
                 modSel.innerHTML += `<option value="${b}">${b}</option>`;
@@ -495,7 +494,7 @@
             mainSel.value = current;
         }
 
-        // --- Modal Toggles ---
+        // --- UI Toggles ---
         function openEntryModal() { 
             document.getElementById('entryModal').style.display = 'flex';
             if(!document.getElementById('editId').value) {
@@ -510,7 +509,6 @@
             document.getElementById('entryModal').style.display = 'none';
             document.getElementById('editId').value = '';
         }
-
         window.onclick = function(e) {
             if (e.target == document.getElementById('entryModal')) closeEntryModal();
             if (e.target == document.getElementById('businessModal')) closeBusinessModal();
