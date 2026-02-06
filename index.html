@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NeonFlux | Pro Dashboard</title>
+    <title>NeonFlux | Premium Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -27,52 +27,76 @@
             min-height: 100vh;
             padding: 15px;
             padding-bottom: 80px;
+            overflow-x: hidden;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; }
-
-        /* --- Header --- */
-        header {
+        /* --- LOCK SCREEN STYLES --- */
+        #lockScreen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 11, 20, 0.98);
+            z-index: 9999;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0, 242, 255, 0.2);
-            flex-wrap: wrap;
-            gap: 15px;
+            text-align: center;
+            padding: 20px;
+            backdrop-filter: blur(15px);
         }
 
-        h1 { font-size: 1.5rem; letter-spacing: 1px; text-shadow: 0 0 10px var(--primary); }
-        
-        .controls { display: flex; gap: 10px; }
-
-        /* --- UI Elements --- */
-        button {
-            background: rgba(0, 242, 255, 0.05);
+        .lock-card {
+            background: #0f1c2e;
+            padding: 30px;
+            border-radius: 15px;
             border: 1px solid var(--primary);
-            color: var(--primary);
-            padding: 8px 16px;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .qr-placeholder {
+            width: 200px;
+            height: 200px;
+            background: white;
+            margin: 20px auto;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-weight: bold;
+            overflow: hidden;
+        }
+        
+        /* QR Code Image Style */
+        .qr-placeholder img { width: 100%; height: 100%; object-fit: contain; }
+
+        .unlock-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+            padding: 12px;
+            width: 100%;
+            font-size: 1rem;
+            margin-top: 15px;
             border-radius: 6px;
             cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            font-weight: bold;
+            letter-spacing: 1px;
         }
+
+        /* --- Main Dashboard Logic --- */
+        .container { max-width: 1200px; margin: 0 auto; filter: blur(0px); transition: 0.5s; }
+        
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid rgba(0, 242, 255, 0.2); flex-wrap: wrap; gap: 15px; }
+        h1 { font-size: 1.5rem; letter-spacing: 1px; text-shadow: 0 0 10px var(--primary); }
+        .controls { display: flex; gap: 10px; }
+        button { background: rgba(0, 242, 255, 0.05); border: 1px solid var(--primary); color: var(--primary); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s; display: flex; align-items: center; gap: 6px; }
         button:hover { background: var(--primary); color: #000; box-shadow: 0 0 10px var(--primary); }
-
-        select, input {
-            background: #0f1c2e;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            outline: none;
-        }
-
-        /* --- Responsive --- */
+        select, input { background: #0f1c2e; border: 1px solid rgba(255, 255, 255, 0.15); color: white; padding: 8px 12px; border-radius: 6px; outline: none; }
+        
+        /* Responsive */
         @media (max-width: 768px) {
             header { flex-direction: column; align-items: flex-start; }
             .controls { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
@@ -80,83 +104,62 @@
             button { justify-content: center; padding: 12px; }
         }
 
-        /* --- Stats Cards --- */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-        }
-        .card::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
-            background: var(--secondary); box-shadow: 0 0 8px var(--secondary);
-        }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card { background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 12px; position: relative; overflow: hidden; }
+        .card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--secondary); box-shadow: 0 0 8px var(--secondary); }
         .card h3 { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 8px; }
         .card .amount { font-size: 1.8rem; font-weight: 700; }
         .card .currency-sub { font-size: 0.85rem; color: var(--primary); opacity: 0.8; margin-top: 4px; }
-
-        /* --- Graph & Table --- */
-        .graph-section, .transactions {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .transactions { overflow-x: auto; }
         
+        .graph-section, .transactions { background: var(--card-bg); border-radius: 12px; padding: 15px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        .transactions { overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 12px; color: var(--primary); border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem; }
         td { padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
-        
         .action-btn { border: none; background: none; padding: 5px; font-size: 1rem; cursor: pointer; }
         .btn-del { color: var(--danger); } .btn-edit { color: var(--text-muted); }
 
-        /* --- Modals --- */
-        .modal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 1000;
-            justify-content: center; align-items: center; padding: 20px;
-        }
-        .modal-content {
-            background: #0f1c2e; width: 100%; max-width: 400px;
-            border-radius: 12px; border: 1px solid var(--primary);
-            box-shadow: 0 0 25px rgba(0, 242, 255, 0.15); padding: 25px;
-            max-height: 90vh; overflow-y: auto;
-        }
-
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #0f1c2e; width: 100%; max-width: 400px; border-radius: 12px; border: 1px solid var(--primary); box-shadow: 0 0 25px rgba(0, 242, 255, 0.15); padding: 25px; max-height: 90vh; overflow-y: auto; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 6px; color: var(--text-muted); font-size: 0.9rem; }
         .form-group input, .form-group select { width: 100%; padding: 12px; }
         .currency-input-group { display: flex; gap: 8px; }
-
-        /* --- Biz Manager --- */
-        .biz-item {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px; background: rgba(255,255,255,0.03);
-            border-radius: 6px; margin-bottom: 8px;
-        }
+        .biz-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.03); border-radius: 6px; margin-bottom: 8px; }
         .biz-delete { color: var(--danger); cursor: pointer; padding: 5px; }
 
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div id="lockScreen">
+        <div class="lock-card">
+            <h2 style="color: var(--primary); margin-bottom: 10px;">PREMIUM ACCESS</h2>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">
+                To unlock this Dollar Dashboard, pay <strong>₹199</strong> via QR below.
+            </p>
+            
+            <div class="qr-placeholder">
+               <i class="fa-solid fa-qrcode" style="font-size: 3rem; color: #333;"></i>
+               </div>
+            
+            <p style="color: white; font-size: 0.8rem; margin: 15px 0;">
+                Step 1: Scan & Pay<br>
+                Step 2: Send Screenshot to Admin<br>
+                Step 3: Enter the Access Code below
+            </p>
+
+            <input type="text" id="accessCode" placeholder="Enter Access Code" style="text-align: center; letter-spacing: 2px; font-weight: bold;">
+            <button class="unlock-btn" onclick="checkAccess()">UNLOCK DASHBOARD</button>
+            <p id="errorMsg" style="color: var(--danger); font-size: 0.8rem; margin-top: 10px; display: none;">Invalid Access Code!</p>
+        </div>
+    </div>
+
+    <div class="container" id="mainApp">
         <header>
             <div>
                 <h1>NeonFlux</h1>
-                <p style="color: var(--text-muted); font-size: 0.8rem;">Mobile Business Dashboard</p>
+                <p style="color: var(--text-muted); font-size: 0.8rem;">Pro Earning Tracker</p>
             </div>
             <div class="controls">
                 <select id="businessSelector" onchange="updateDashboard()">
@@ -164,6 +167,7 @@
                 </select>
                 <button onclick="openBusinessModal()"><i class="fa-solid fa-list-check"></i> Manage Biz</button>
                 <button onclick="openEntryModal()"><i class="fa-solid fa-plus"></i> Entry</button>
+                <button onclick="lockApp()" style="color: var(--danger); border-color: var(--danger);"><i class="fa-solid fa-lock"></i></button>
             </div>
         </header>
 
@@ -222,29 +226,16 @@
             </div>
             <form id="entryForm" onsubmit="handleFormSubmit(event)">
                 <input type="hidden" id="editId">
-                <div class="form-group">
-                    <label>Business</label>
-                    <select id="entryBusiness" required></select>
-                </div>
-                <div class="form-group">
-                    <label>Client Name</label>
-                    <input type="text" id="clientName" required placeholder="Client Name">
-                </div>
-                <div class="form-group">
-                    <label>Amount</label>
+                <div class="form-group"><label>Business</label><select id="entryBusiness" required></select></div>
+                <div class="form-group"><label>Client Name</label><input type="text" id="clientName" required placeholder="Client Name"></div>
+                <div class="form-group"><label>Amount</label>
                     <div class="currency-input-group">
                         <input type="number" id="amount" step="0.01" required placeholder="0.00" oninput="updateConversionPreview()" style="flex:2;">
-                        <select id="currencyType" onchange="updateConversionPreview()" style="flex:1;">
-                            <option value="USD">USD</option>
-                            <option value="INR">INR</option>
-                        </select>
+                        <select id="currencyType" onchange="updateConversionPreview()" style="flex:1;"><option value="USD">USD</option><option value="INR">INR</option></select>
                     </div>
                     <small id="conversionPreview" style="color: var(--primary); display: block; margin-top: 5px;">≈ $0.00</small>
                 </div>
-                <div class="form-group">
-                    <label>Date</label>
-                    <input type="date" id="date" required>
-                </div>
+                <div class="form-group"><label>Date</label><input type="date" id="date" required></div>
                 <button type="submit" style="width: 100%; justify-content: center; padding: 15px;">Save Entry</button>
             </form>
         </div>
@@ -252,41 +243,73 @@
 
     <div class="modal" id="businessModal">
         <div class="modal-content">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-                <h2>Manage Businesses</h2>
-                <span onclick="closeBusinessModal()" style="font-size: 1.5rem; cursor: pointer;">&times;</span>
-            </div>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <input type="text" id="newBizInput" placeholder="New Business Name">
-                <button onclick="addBusinessFromModal()">Add</button>
-            </div>
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;"><h2>Manage Businesses</h2><span onclick="closeBusinessModal()" style="font-size: 1.5rem; cursor: pointer;">&times;</span></div>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;"><input type="text" id="newBizInput" placeholder="New Business Name"><button onclick="addBusinessFromModal()">Add</button></div>
             <div style="max-height: 200px; overflow-y: auto;" id="businessListContainer"></div>
         </div>
     </div>
 
     <script>
+        // --- !!! PASSWORD SETTING !!! ---
+        const CORRECT_PASSCODE = "MONEY2026"; // <--- PASSWORD SET HERE
+        
+        const LOCK_SCREEN = document.getElementById('lockScreen');
+        const APP_CONTAINER = document.getElementById('mainApp');
+
+        // --- Check Lock State ---
+        function checkInitialLock() {
+            const isUnlocked = localStorage.getItem('isUnlocked');
+            if (isUnlocked === 'true') {
+                LOCK_SCREEN.style.display = 'none';
+            } else {
+                LOCK_SCREEN.style.display = 'flex';
+                APP_CONTAINER.style.filter = 'blur(10px)';
+            }
+        }
+
+        // --- Unlock Function ---
+        function checkAccess() {
+            const input = document.getElementById('accessCode').value;
+            const error = document.getElementById('errorMsg');
+            
+            if (input === CORRECT_PASSCODE) {
+                localStorage.setItem('isUnlocked', 'true');
+                LOCK_SCREEN.style.display = 'none';
+                APP_CONTAINER.style.filter = 'none';
+                error.style.display = 'none';
+            } else {
+                error.style.display = 'block';
+                document.querySelector('.lock-card').style.animation = "shake 0.5s";
+                setTimeout(() => document.querySelector('.lock-card').style.animation = "", 500);
+            }
+        }
+
+        function lockApp() {
+            localStorage.setItem('isUnlocked', 'false');
+            location.reload();
+        }
+
+        // --- DASHBOARD LOGIC ---
         const CONVERSION_RATE = 90;
         let businesses = JSON.parse(localStorage.getItem('businesses')) || ['Freelance', 'Agency'];
         let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
         let myChart = null;
 
         document.addEventListener('DOMContentLoaded', () => {
+            checkInitialLock(); 
             renderBusinessOptions();
             updateDashboard();
             document.getElementById('date').valueAsDate = new Date();
         });
 
-        // --- Core Functions ---
         function updateDashboard() {
             const selectedBiz = document.getElementById('businessSelector').value;
             const filteredData = selectedBiz === 'all' ? transactions : transactions.filter(t => t.business === selectedBiz);
-
             const totalUSD = filteredData.reduce((sum, t) => sum + parseFloat(t.amount), 0);
             
             document.getElementById('totalUSD').innerText = `$${totalUSD.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('totalINR').innerText = `₹${(totalUSD * CONVERSION_RATE).toLocaleString(undefined, {minimumFractionDigits: 2})}`;
             document.getElementById('totalClients').innerText = new Set(filteredData.map(t => t.client)).size;
-
             renderTable(filteredData);
             renderChart(filteredData);
         }
@@ -294,99 +317,32 @@
         function renderChart(data) {
             const ctx = document.getElementById('earningsChart').getContext('2d');
             const type = document.getElementById('chartType').value;
-            
-            // 1. Group Data
             const grouped = {};
             data.forEach(t => {
-                let key;
-                if (type === 'monthly') {
-                    // Extract YYYY-MM (e.g., 2024-02)
-                    key = t.date.substring(0, 7); 
-                } else {
-                    // Daily (e.g., 2024-02-15)
-                    key = t.date; 
-                }
+                let key = (type === 'monthly') ? t.date.substring(0, 7) : t.date;
                 grouped[key] = (grouped[key] || 0) + parseFloat(t.amount);
             });
-
-            // 2. Sort Keys (Dates)
             const sortedKeys = Object.keys(grouped).sort();
-
-            // 3. Format Labels for Display (e.g., "Jan 2024" or "Feb 15")
             const labels = sortedKeys.map(key => {
                 const date = new Date(key + (type === 'monthly' ? '-01' : ''));
-                if (type === 'monthly') {
-                    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }); // "Jan 2024"
-                } else {
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }); // "Jan 15"
-                }
+                return type === 'monthly' ? date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             });
-
             const values = sortedKeys.map(k => grouped[k]);
 
-            // 4. Render Chart
             if (myChart) myChart.destroy();
             myChart = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Earnings (USD)',
-                        data: values,
-                        backgroundColor: 'rgba(0, 242, 255, 0.6)',
-                        borderColor: '#00f2ff',
-                        borderWidth: 1,
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `$${context.raw.toFixed(2)}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: { 
-                            beginAtZero: true,
-                            ticks: { color: '#64748b' }, 
-                            grid: { color: 'rgba(255,255,255,0.05)' } 
-                        },
-                        x: { 
-                            ticks: { color: '#64748b', maxRotation: 45, minRotation: 0 }, 
-                            grid: { display: false } 
-                        }
-                    }
-                }
+                data: { labels: labels, datasets: [{ label: 'Earnings (USD)', data: values, backgroundColor: 'rgba(0, 242, 255, 0.6)', borderColor: '#00f2ff', borderWidth: 1 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { ticks: { color: '#64748b' }, grid: { display: false } } } }
             });
         }
 
-        // --- Table & Forms ---
         function renderTable(data) {
             const tbody = document.getElementById('transactionTableBody');
             tbody.innerHTML = '';
-            // Clone and sort data so original order isn't affected if needed elsewhere
-            const sortedData = [...data].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-            sortedData.forEach(t => {
+            [...data].sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(t => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${t.date}</td>
-                    <td style="font-weight:600; color:#fff;">${t.client}</td>
-                    <td><small style="opacity:0.7;">${t.business}</small></td>
-                    <td style="color:#00f2ff;">$${parseFloat(t.amount).toFixed(2)}</td>
-                    <td style="color:#bc13fe;">₹${(t.amount * CONVERSION_RATE).toFixed(0)}</td>
-                    <td>
-                        <button class="action-btn btn-edit" onclick="editEntry(${t.id})"><i class="fa fa-pen"></i></button>
-                        <button class="action-btn btn-del" onclick="deleteEntry(${t.id})"><i class="fa fa-trash"></i></button>
-                    </td>
-                `;
+                tr.innerHTML = `<td>${t.date}</td><td style="font-weight:600; color:#fff;">${t.client}</td><td><small style="opacity:0.7;">${t.business}</small></td><td style="color:#00f2ff;">$${parseFloat(t.amount).toFixed(2)}</td><td style="color:#bc13fe;">₹${(t.amount * CONVERSION_RATE).toFixed(0)}</td><td><button class="action-btn btn-edit" onclick="editEntry(${t.id})"><i class="fa fa-pen"></i></button><button class="action-btn btn-del" onclick="deleteEntry(${t.id})"><i class="fa fa-trash"></i></button></td>`;
                 tbody.appendChild(tr);
             });
         }
@@ -399,120 +355,32 @@
             const inputAmount = parseFloat(document.getElementById('amount').value);
             const currency = document.getElementById('currencyType').value;
             const date = document.getElementById('date').value;
-
             const finalAmountUSD = currency === 'INR' ? inputAmount / CONVERSION_RATE : inputAmount;
-
-            if (id) {
-                const index = transactions.findIndex(t => t.id == id);
-                transactions[index] = { id: parseInt(id), client, business, amount: finalAmountUSD, date };
-            } else {
-                transactions.push({ id: Date.now(), client, business, amount: finalAmountUSD, date });
-            }
-
-            localStorage.setItem('transactions', JSON.stringify(transactions));
-            updateDashboard();
-            closeEntryModal();
+            if (id) { const index = transactions.findIndex(t => t.id == id); transactions[index] = { id: parseInt(id), client, business, amount: finalAmountUSD, date }; } 
+            else { transactions.push({ id: Date.now(), client, business, amount: finalAmountUSD, date }); }
+            localStorage.setItem('transactions', JSON.stringify(transactions)); updateDashboard(); closeEntryModal();
         }
 
         function updateConversionPreview() {
             const amount = parseFloat(document.getElementById('amount').value) || 0;
             const cur = document.getElementById('currencyType').value;
             const el = document.getElementById('conversionPreview');
-            if(cur === 'USD') el.innerText = `≈ ₹${(amount * CONVERSION_RATE).toFixed(2)}`;
-            else el.innerText = `≈ $${(amount / CONVERSION_RATE).toFixed(2)}`;
+            el.innerText = cur === 'USD' ? `≈ ₹${(amount * CONVERSION_RATE).toFixed(2)}` : `≈ $${(amount / CONVERSION_RATE).toFixed(2)}`;
         }
 
         function editEntry(id) {
-            const t = transactions.find(x => x.id === id);
-            document.getElementById('editId').value = t.id;
-            document.getElementById('clientName').value = t.client;
-            document.getElementById('entryBusiness').value = t.business;
-            document.getElementById('amount').value = parseFloat(t.amount).toFixed(2);
-            document.getElementById('currencyType').value = 'USD';
-            document.getElementById('date').value = t.date;
-            document.getElementById('modalTitle').innerText = "Edit Entry";
-            updateConversionPreview();
-            openEntryModal();
+            const t = transactions.find(x => x.id === id); document.getElementById('editId').value = t.id; document.getElementById('clientName').value = t.client; document.getElementById('entryBusiness').value = t.business; document.getElementById('amount').value = parseFloat(t.amount).toFixed(2); document.getElementById('currencyType').value = 'USD'; document.getElementById('date').value = t.date; document.getElementById('modalTitle').innerText = "Edit Entry"; updateConversionPreview(); openEntryModal();
         }
-
-        function deleteEntry(id) {
-            if(confirm('Delete transaction?')) {
-                transactions = transactions.filter(t => t.id !== id);
-                localStorage.setItem('transactions', JSON.stringify(transactions));
-                updateDashboard();
-            }
-        }
-
-        // --- Business Logic ---
+        function deleteEntry(id) { if(confirm('Delete?')) { transactions = transactions.filter(t => t.id !== id); localStorage.setItem('transactions', JSON.stringify(transactions)); updateDashboard(); } }
         function openBusinessModal() { document.getElementById('businessModal').style.display = 'flex'; renderBusinessList(); }
         function closeBusinessModal() { document.getElementById('businessModal').style.display = 'none'; }
-        
-        function renderBusinessList() {
-            const container = document.getElementById('businessListContainer');
-            container.innerHTML = '';
-            businesses.forEach(b => {
-                container.innerHTML += `
-                    <div class="biz-item">
-                        <span>${b}</span>
-                        <i onclick="deleteBusiness('${b}')" class="fa fa-trash biz-delete"></i>
-                    </div>
-                `;
-            });
-        }
-
-        function addBusinessFromModal() {
-            const input = document.getElementById('newBizInput');
-            const name = input.value.trim();
-            if (name && !businesses.includes(name)) {
-                businesses.push(name);
-                localStorage.setItem('businesses', JSON.stringify(businesses));
-                input.value = '';
-                renderBusinessList();
-                renderBusinessOptions();
-            }
-        }
-
-        function deleteBusiness(name) {
-            if(confirm(`Delete "${name}"?`)) {
-                businesses = businesses.filter(b => b !== name);
-                localStorage.setItem('businesses', JSON.stringify(businesses));
-                renderBusinessList();
-                renderBusinessOptions();
-            }
-        }
-
-        function renderBusinessOptions() {
-            const mainSel = document.getElementById('businessSelector');
-            const modSel = document.getElementById('entryBusiness');
-            const current = mainSel.value;
-            mainSel.innerHTML = '<option value="all">All Businesses</option>';
-            modSel.innerHTML = '';
-            businesses.forEach(b => {
-                mainSel.innerHTML += `<option value="${b}">${b}</option>`;
-                modSel.innerHTML += `<option value="${b}">${b}</option>`;
-            });
-            mainSel.value = current;
-        }
-
-        // --- UI Toggles ---
-        function openEntryModal() { 
-            document.getElementById('entryModal').style.display = 'flex';
-            if(!document.getElementById('editId').value) {
-                document.getElementById('entryForm').reset();
-                document.getElementById('currencyType').value = 'USD';
-                document.getElementById('modalTitle').innerText = "New Entry";
-                document.getElementById('date').valueAsDate = new Date();
-                updateConversionPreview();
-            }
-        }
-        function closeEntryModal() { 
-            document.getElementById('entryModal').style.display = 'none';
-            document.getElementById('editId').value = '';
-        }
-        window.onclick = function(e) {
-            if (e.target == document.getElementById('entryModal')) closeEntryModal();
-            if (e.target == document.getElementById('businessModal')) closeBusinessModal();
-        }
+        function renderBusinessList() { const c = document.getElementById('businessListContainer'); c.innerHTML = ''; businesses.forEach(b => { c.innerHTML += `<div class="biz-item"><span>${b}</span><i onclick="deleteBusiness('${b}')" class="fa fa-trash biz-delete"></i></div>`; }); }
+        function addBusinessFromModal() { const n = document.getElementById('newBizInput').value.trim(); if (n && !businesses.includes(n)) { businesses.push(n); localStorage.setItem('businesses', JSON.stringify(businesses)); renderBusinessList(); renderBusinessOptions(); } }
+        function deleteBusiness(n) { if(confirm(`Delete "${n}"?`)) { businesses = businesses.filter(b => b !== n); localStorage.setItem('businesses', JSON.stringify(businesses)); renderBusinessList(); renderBusinessOptions(); } }
+        function renderBusinessOptions() { const ms = document.getElementById('businessSelector'); const mds = document.getElementById('entryBusiness'); const c = ms.value; ms.innerHTML = '<option value="all">All Businesses</option>'; mds.innerHTML = ''; businesses.forEach(b => { ms.innerHTML += `<option value="${b}">${b}</option>`; mds.innerHTML += `<option value="${b}">${b}</option>`; }); ms.value = c; }
+        function openEntryModal() { document.getElementById('entryModal').style.display = 'flex'; if(!document.getElementById('editId').value) { document.getElementById('entryForm').reset(); document.getElementById('currencyType').value = 'USD'; document.getElementById('modalTitle').innerText = "New Entry"; document.getElementById('date').valueAsDate = new Date(); updateConversionPreview(); } }
+        function closeEntryModal() { document.getElementById('entryModal').style.display = 'none'; document.getElementById('editId').value = ''; }
+        window.onclick = function(e) { if (e.target == document.getElementById('entryModal')) closeEntryModal(); if (e.target == document.getElementById('businessModal')) closeBusinessModal(); }
     </script>
 </body>
 </html>
