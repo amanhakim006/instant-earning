@@ -166,7 +166,22 @@
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; color: var(--text-muted); }
         .form-group input, .form-group select { width: 100%; }
+        
+        /* Currency Input Group */
+        .currency-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
         .close-modal { float: right; cursor: pointer; font-size: 1.5rem; }
+
+        #conversionPreview {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-style: italic;
+        }
 
     </style>
 </head>
@@ -248,11 +263,19 @@
                     <select id="entryBusiness" required>
                         </select>
                 </div>
+                
                 <div class="form-group">
-                    <label>Amount (USD)</label>
-                    <input type="number" id="amount" step="0.01" required placeholder="0.00">
-                    <small style="color: var(--text-muted)">INR will be auto-calculated (x90)</small>
+                    <label>Amount & Currency</label>
+                    <div class="currency-input-group">
+                        <input type="number" id="amount" step="0.01" required placeholder="0.00" oninput="updateConversionPreview()" style="flex:2;">
+                        <select id="currencyType" onchange="updateConversionPreview()" style="flex:1;">
+                            <option value="USD">USD ($)</option>
+                            <option value="INR">INR (₹)</option>
+                        </select>
+                    </div>
+                    <span id="conversionPreview">≈ $0.00 / ₹0.00</span>
                 </div>
+
                 <div class="form-group">
                     <label>Date</label>
                     <input type="date" id="date" required>
@@ -395,20 +418,27 @@
             const id = document.getElementById('editId').value;
             const client = document.getElementById('clientName').value;
             const business = document.getElementById('entryBusiness').value;
-            const amount = parseFloat(document.getElementById('amount').value);
+            const inputAmount = parseFloat(document.getElementById('amount').value);
+            const currency = document.getElementById('currencyType').value;
             const date = document.getElementById('date').value;
+
+            // Convert to Base Currency (USD) for storage
+            let finalAmountUSD = inputAmount;
+            if (currency === 'INR') {
+                finalAmountUSD = inputAmount / CONVERSION_RATE;
+            }
 
             if (id) {
                 // Edit
                 const index = transactions.findIndex(t => t.id == id);
-                transactions[index] = { id: parseInt(id), client, business, amount, date };
+                transactions[index] = { id: parseInt(id), client, business, amount: finalAmountUSD, date };
             } else {
                 // Add New
                 const newTx = {
                     id: Date.now(),
                     client,
                     business,
-                    amount,
+                    amount: finalAmountUSD,
                     date
                 };
                 transactions.push(newTx);
@@ -418,12 +448,33 @@
             closeModal();
         }
 
+        function updateConversionPreview() {
+            const amount = parseFloat(document.getElementById('amount').value) || 0;
+            const currency = document.getElementById('currencyType').value;
+            const previewEl = document.getElementById('conversionPreview');
+
+            if (currency === 'USD') {
+                // Input is USD, show INR
+                const inr = amount * CONVERSION_RATE;
+                previewEl.innerText = `You entered $${amount}. Value in INR: ₹${inr.toFixed(2)}`;
+            } else {
+                // Input is INR, show USD
+                const usd = amount / CONVERSION_RATE;
+                previewEl.innerText = `You entered ₹${amount}. Value in USD: $${usd.toFixed(2)}`;
+            }
+        }
+
         function editEntry(id) {
             const t = transactions.find(x => x.id === id);
             document.getElementById('editId').value = t.id;
             document.getElementById('clientName').value = t.client;
             document.getElementById('entryBusiness').value = t.business;
-            document.getElementById('amount').value = t.amount;
+            
+            // Set default editing view to USD
+            document.getElementById('amount').value = parseFloat(t.amount).toFixed(2);
+            document.getElementById('currencyType').value = 'USD';
+            updateConversionPreview();
+
             document.getElementById('date').value = t.date;
             
             document.getElementById('modalTitle').innerText = "Edit Entry";
@@ -479,8 +530,10 @@
             document.getElementById('entryModal').style.display = 'flex'; 
             if(!document.getElementById('editId').value) {
                 document.getElementById('entryForm').reset();
+                document.getElementById('currencyType').value = 'USD'; // Reset to USD default
                 document.getElementById('modalTitle').innerText = "Add New Entry";
                 document.getElementById('date').valueAsDate = new Date();
+                updateConversionPreview();
             }
         }
         function closeModal() { 
